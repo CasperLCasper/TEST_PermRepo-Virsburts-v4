@@ -29,6 +29,8 @@
 - **S-04** Archived repositories can be backed up (`ALLOW_ARCHIVED_REPOSITORIES`, default true).
 - **C-01/C-03/C-07 contracts v2** (`public/contracts/CHANGES-v2.md`): `revokeRepository`, ERC-1271 in `addBackup`, `subscribeWithMaxPrice` (client uses it when `SUBSCRIPTION_SUPPORTS_MAX_PRICE=true`). Not compiled in the build environment — compile and test in Remix.
 
+- **Memory budget** now uses the container memory limit (cgroup / `process.constrainedMemory()`), not `os.totalmem()` (the host's RAM). Found in the first Render logs: the budget showed 19.7 GB. Override with `RESOURCE_TOTAL_MEMORY_BYTES`. Large repositories may now be refused on small instances — that is the intended protection against out-of-memory crashes.
+
 ### New environment variables
 `PUBLIC_RPC_URL`, `MANIFEST_MERKLE_VERSION`, `GITHUB_AUTH_MODE`, `GITHUB_APP_SLUG`, `ALLOW_ARCHIVED_REPOSITORIES`, `SUBSCRIPTION_SUPPORTS_MAX_PRICE`, `MANIFEST_VERIFY_TIMEOUT_MS`, `MANIFEST_VERIFY_ATTEMPTS`, `ZIP_AVAILABILITY_CONCURRENCY`, `JOB_INDEX_LEGACY_SCAN`, `REPO_JOBS_INDEX_TTL_SECONDS`, `JOB_INDEX_TOUCH_INTERVAL_MS`.
 
