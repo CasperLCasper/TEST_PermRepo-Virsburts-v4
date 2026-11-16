@@ -20,6 +20,7 @@ import yauzl from 'yauzl';
 import { DataItem } from '@dha-team/arbundles';
 import { parseRequireAns104Location } from './ans104-location-config.js';
 import { createArchiveMerkleV2 } from './shared/archive-merkle.js';
+import { detectMemoryLimit } from './memory-limit.js';
 import {
     maskWallet,
     publicErrorMessage,
@@ -247,7 +248,9 @@ initRedis();
 
 class BackupResourceController {
     constructor() {
-        this.totalMemoryBytes = os.totalmem();
+        // Konteinera limits (nevis hosta atmiņa) — citādi budžets ir daudzkārt par lielu.
+        this.memoryLimit = detectMemoryLimit();
+        this.totalMemoryBytes = this.memoryLimit.bytes;
         this.memoryBudgetBytes = Math.floor(
             this.totalMemoryBytes *
                 RESOURCE_MEMORY_BUDGET_RATIO
@@ -4896,6 +4899,7 @@ app.listen(PORT, () => {
     logInfo('Max repo bytes', MAX_REPO_BYTES);
     logInfo('Max file bytes', MAX_FILE_BYTES);
     logInfo('Max ZIP bytes', MAX_ZIP_BYTES);
+    logInfo('Memory limit', `${backupResourceController.totalMemoryBytes} bytes (${backupResourceController.memoryLimit.source})`);
     logInfo('Resource memory budget', `${Math.round(RESOURCE_MEMORY_BUDGET_RATIO * 100)}% (${backupResourceController.memoryBudgetBytes} bytes)`);
     logInfo('Resource memory multiplier', RESOURCE_MEMORY_MULTIPLIER);
     logInfo('Max backup queue', MAX_BACKUP_QUEUE);
