@@ -782,3 +782,10 @@ test('P56 — arhivēti repozitoriji ir atļauti pēc noklusējuma (ALLOW_ARCHIV
   assert.match(server, /data\.archived && !ALLOW_ARCHIVED_REPOSITORIES/);
   assert.match(server, /data\.archived && options\.allowArchived !== true && !ALLOW_ARCHIVED_REPOSITORIES/);
 });
+
+test('P57 — resursu kontrolieris izmanto konteinera atmiņas limitu, nevis hosta os.totalmem()', () => {
+  const server = read('server.js');
+  assert.match(server, /import \{ detectMemoryLimit \} from '\.\/memory-limit\.js'/);
+  assert.match(server, /this\.memoryLimit = detectMemoryLimit\(\)/);
+  assert.doesNotMatch(server, /this\.totalMemoryBytes = os\.totalmem\(\)/);
+});
